@@ -1,0 +1,131 @@
+import java.util.*;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;;
+public class Eletable{
+ public int q,w;
+ public int a,aday,aweek;
+ public int ause,aweekuse,amonthuse;
+ public double adaycost,aweekcost,amonthcost; 
+ public ArrayList<Integer> adayuse = new ArrayList<Integer>();
+ public SimpleDateFormat matter1,matter2,matter3;
+ public Date d2,d1;
+ public String text,time;
+ public int[] date1;
+ public ArrayList<Double> day,week,month;       
+ public File files,file1,file2;
+ public Eletable(String s)
+ {text=s;
+ files = new File ("Ele/"+text);
+ file1 = new File("EMhistory/"+text);
+ file2 = new File("EWhistory/"+text); 
+  try  
+    { 
+       matter1=new SimpleDateFormat("HH:mm:ss");
+	   matter2=new SimpleDateFormat("yyyy-MM-dd");
+	   matter3=new SimpleDateFormat("E");
+	   time = matter1.format(new Date());
+	   d2 = matter1.parse("19:35:59");}
+  catch (Exception e)  {  }
+  String[] date=  matter2.format(new Date()).split("-");
+  date1 = new int[3];
+  for(int i =0;i<3;i++){ date1[i] = Integer.parseInt(date[i]);}
+ // System.out.println(date1[0]+"-"+date1[1]+"-"+date1[2]);
+  for(int i =0;i<=date1[2];i++)
+  {adayuse.add(0);}
+   aday =date1[2];
+}
+ public void adc (){
+ BufferedReader br=null;
+    try{
+        File file=new File("charge.txt");
+        br = new BufferedReader(new FileReader(file));
+        String temp=br.readLine();
+        double charge=Double.valueOf(temp);
+        adaycost=charge*(int)adayuse.get(aday);
+        aweekcost=charge*aweekuse;
+        amonthcost=charge*amonthuse;
+        day = new ArrayList<Double>();
+        week = new ArrayList<Double>();
+        month = new ArrayList<Double>();
+        day.add(adayuse.get(aday)+0.0);
+        day.add(adaycost);
+        week.add(aweekuse+0.0);
+        week.add(aweekcost);
+        month.add(amonthuse+0.0);
+        month.add(amonthcost);
+     try {  
+          ObjectOutputStream os = new ObjectOutputStream( new FileOutputStream(files,false));  
+            os.writeObject(day); 
+            os.writeObject(week);
+            os.writeObject(month);
+            os.close();  
+        } catch (FileNotFoundException e) {} 
+		  catch (IOException e) {  
+            e.printStackTrace();  
+        }  
+    }
+	catch (IOException e) {  
+        System.out.println("Exception occurred:");  
+        e.printStackTrace(); } 
+  try  
+    { 	d1 =  matter1.parse(matter1.format(new Date()));}
+  catch (Exception e)  {  }
+  java.util.Timer timer = new java.util.Timer();
+  timer.schedule(new java.util.TimerTask() { 
+  public void run(){ 
+	a++;  
+    ause=ause+(int)(Math.random()*3);
+    adayuse.set(aday,ause+adayuse.get(aday));
+	System.out.println(adayuse.get(aday));
+    aweekuse=aweekuse+ause;
+    amonthuse=amonthuse+ause;
+	day.set(0,adayuse.get(aday)+0.0);
+    day.set(1,adaycost);
+    week.set(0,aweekuse+0.0);
+    week.set(1,aweekcost);
+    month.set(0,amonthuse+0.0);
+    month.set(1,amonthcost);
+	try {  
+          ObjectOutputStream os = new ObjectOutputStream( new FileOutputStream(files,false));  
+            os.writeObject(day); 
+            os.writeObject(week);
+            os.writeObject(month);
+            os.close();  
+        } catch (FileNotFoundException e) {timer.cancel();} 
+		  catch (IOException e) {  
+            e.printStackTrace();  }
+	if(a%2880==0&&a!=0)
+    {aday++;
+     adayuse.add(0);
+     ause=0; 
+	 String week = matter3.format(new Date());
+	 String[] date= matter2.format(new Date()).split("-");
+	 if(week.equals("ÐÇÆÚÒ»")&&q==0)
+	{
+	q = 1;
+   BufferedWriter writer = null;
+   try{ aweek++;
+        writer=new BufferedWriter(new FileWriter(file2,true));
+        writer.write(aweek+" "+amonthuse); 
+        writer.newLine();
+        writer.close();}
+	catch (IOException q) {  
+         q.printStackTrace();}
+		 aweekuse=0;}
+	 if(date[2].equals("01")&&w==0)
+    {w = 1;
+    BufferedWriter writer = null;
+   try{ 
+        writer=new BufferedWriter(new FileWriter(file1,true));
+        writer.write(date1[1]+" "+amonthuse); 
+        writer.newLine();
+        writer.close();}
+	catch (IOException q) {  
+         q.printStackTrace();}
+      date1[1]++;
+	  amonthuse=0;
+     }} 
+   } },d2.getTime()-d1.getTime()+31*1000,30*1000);
+ }
+}
